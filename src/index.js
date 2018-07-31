@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import AuthorQuiz from './AuthorQuiz';
 import registerServiceWorker from './registerServiceWorker';
+import {shuffle, sample} from 'underscore';
 const authors = [
     {
         name: 'Mark Twain',
@@ -12,15 +13,57 @@ const authors = [
         "Life of the Mississippi",
         "Roughing It"
         ]
+    },
+    {
+        name: 'J.K Rowling',
+        imageUrl: 'https://larryfire.files.wordpress.com/2012/04/jk-rowling-official-portrait.jpg',
+        imageSource: 'Goggle Images',
+        books: ['Harry Potter and the Sorcerers Stone']
     }, 
+    {
+        name: 'Joseph Conrad',
+        imageUrl: 'https://m.media-amazon.com/images/M/MV5BZDlkYTFkNjMtZDhmNC00NTQ2LWJlNTMtNmVhMjhhNjZhNDhhXkEyXkFqcGdeQXVyMTc4MzI2NQ@@._V1_UY317_CR5,0,214,317_AL_.jpg',
+        imageSource: 'Goggle Images',
+        books: ['Heart of Darkness']
+    },
+    {
+        name: 'Stephen King',
+        imageUrl: 'https://newengland.com/wp-content/uploads/2015/08/Stephen-King-585x780.jpg',
+        imageSource: 'Goggle Images',
+        books: ['The Shining', 'IT']
+    },
+    {
+        name: 'Charles Dickens',
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Dickens_Gurney_head.jpg/200px-Dickens_Gurney_head.jpg',
+        imageSource: 'Goggle Images',
+        books: ['David Copperfield', 'A Tale of Two Cities']
+    }  
 ]
 
-const state = {
-    turnData: {
-        author: authors[0],
-        books: authors[0].books
+
+const getTurnData = () => {
+    const allBooks = authors.reduce(function (p, c, i) {
+        return p.concat(c.books);
+    }, []);
+    let fourRandomBooks = shuffle(allBooks).slice(0, 4)
+    let answer = sample(fourRandomBooks)
+    console.log(authors.find((author) =>
+        author.books.some((title) => title === answer)))
+
+    return {
+        books: fourRandomBooks,
+        author: authors.find((author) => 
+            author.books.some((title) => title === answer))
     }
-}
+
+
+} 
+
+
+const state = {
+    turnData: getTurnData(authors)
+} 
+ 
 
 ReactDOM.render(<AuthorQuiz {...state}/>, document.getElementById('root'));
 registerServiceWorker();

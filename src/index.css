@@ -16,3 +16,7 @@ body {
 .answer:hover {
   background-color:  #d0e3f0;
 }
+
+.authorimage {
+  width: 100%;
+}
