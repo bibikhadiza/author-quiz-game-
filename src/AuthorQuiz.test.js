@@ -4,5 +4,5 @@ import AuthorQuiz from './AuthorQuiz';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<AuthorQuiz />, div);
+  ReactDOM.render(<AuthorQuiz/>, div);
 });
