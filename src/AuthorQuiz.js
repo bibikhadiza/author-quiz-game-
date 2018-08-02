@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './AuthorQuiz.css';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 
 function Hero() {
@@ -81,6 +82,8 @@ function AuthorQuiz({ turnData, highlight, onAnswerSelected}){
       <Hero /> 
       <Turn {...turnData} highlight={highlight} onAnswerSelected={onAnswerSelected}/>
       <Continue />
+      <hr />
+      <p><Link to="/add">Add an author</Link></p>
       <Footer />
     </div>
   );

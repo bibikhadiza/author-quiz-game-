@@ -1,9 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import './index.css';
 import AuthorQuiz from './AuthorQuiz';
 import registerServiceWorker from './registerServiceWorker';
 import {shuffle, sample} from 'underscore';
+
+
+
 const authors = [
     {
         name: 'Mark Twain',
@@ -68,9 +72,28 @@ function onAnswerSelected(answer) {
     render()
 }
 
+function App() {
+    return <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected} />
+}
+
+function AddAuthorForm(match) {
+    return (
+        <div>
+            <p>{JSON.stringify(match)}</p>
+        </div>
+    )
+}
 
 function render() {
-    ReactDOM.render(<AuthorQuiz {...state} onAnswerSelected={onAnswerSelected}/>, document.getElementById('root'));
+    ReactDOM.render(
+    <BrowserRouter>
+        <React.Fragment>
+            <Route exact path='/' component={App} />
+            <Route exact path='/add' component={AddAuthorForm} />
+        </React.Fragment>
+    </BrowserRouter>, 
+    document.getElementById('root')
+    );
 }
 
 
