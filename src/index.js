@@ -47,8 +47,8 @@ const getTurnData = () => {
     }, []);
     let fourRandomBooks = shuffle(allBooks).slice(0, 4)
     let answer = sample(fourRandomBooks)
-    console.log(authors.find((author) =>
-        author.books.some((title) => title === answer)))
+    // console.log(authors.find((author) =>
+    //     author.books.some((title) => title === answer)))
 
     return {
         books: fourRandomBooks,
@@ -59,11 +59,26 @@ const getTurnData = () => {
 
 } 
 
+function onAnswerSelected(answer) {
+    console.log(answer, 'answer')
+    const isCorrect = state.turnData.author.books.some((book) => book === answer);
+    state.highlight = isCorrect? 'correct' : 'wrong'
+
+    render()
+}
+
+
+function render() {
+    ReactDOM.render(<AuthorQuiz {...state} onAnswerSelected={onAnswerSelected} />, document.getElementById('root'));
+}
+
 
 const state = {
-    turnData: getTurnData(authors)
+    turnData: getTurnData(authors),
+    highLight: 'wrong'
 } 
  
 
-ReactDOM.render(<AuthorQuiz {...state}/>, document.getElementById('root'));
+// 
+render()
 registerServiceWorker();
