@@ -46,18 +46,19 @@ const getTurnData = () => {
         return p.concat(c.books);
     }, []);
     let fourRandomBooks = shuffle(allBooks).slice(0, 4)
-    let answer = sample(fourRandomBooks)
-    // console.log(authors.find((author) =>
-    //     author.books.some((title) => title === answer)))
+    let answer = sample(fourRandomBooks);
 
     return {
         books: fourRandomBooks,
         author: authors.find((author) => 
-            author.books.some((title) => title === answer))
+        author.books.some((title) => title === answer))
     }
-
-
 } 
+
+const state = {
+    turnData: getTurnData(authors),
+    highLight: 'none'
+}
 
 function onAnswerSelected(answer) {
     console.log(answer, 'answer')
@@ -69,15 +70,10 @@ function onAnswerSelected(answer) {
 
 
 function render() {
-    ReactDOM.render(<AuthorQuiz {...state} onAnswerSelected={onAnswerSelected} />, document.getElementById('root'));
+    ReactDOM.render(<AuthorQuiz {...state} onAnswerSelected={onAnswerSelected}/>, document.getElementById('root'));
 }
 
 
-const state = {
-    turnData: getTurnData(authors),
-    highLight: 'wrong'
-} 
- 
 
 // 
 render()
