@@ -1,8 +1,11 @@
 import React from 'react';
 import './AddAuthorForm.css'
+import { connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 
 
-class AddAuthor extends React.Component {
+
+ class AddAuthor extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -35,9 +38,14 @@ class AddAuthor extends React.Component {
         })
     }
 
+    onAddAuthor(event) {
+        event.preventDefault();
+
+    }
+
     render() {
         return(
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.onAddAuthor}>
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
                     <input type="text" name="name" value={this.state.name} onChange={this.onFieldChange} className="form-control"/>
@@ -63,7 +71,7 @@ class AddAuthor extends React.Component {
     }
 }
 
-export function AddAuthorForm({match , onAddAuthor}) {
+export const AddAuthorForm = ({match , onAddAuthor}) => {
     return (
         <div className="AddAuthorForm">
             <h1>Add Author</h1>
@@ -71,3 +79,17 @@ export function AddAuthorForm({match , onAddAuthor}) {
         </div>
     )
 }
+
+function mapDispatchToProps(dispatch, props) {
+    return {
+        onAddAuthor: (author) => {
+            
+            dispatch({type: 'ADD_AUTHOR', author});
+            props.history.push('/')
+        }
+    }
+}
+
+export default withRouter(connect(() => {}, mapDispatchToProps)(AddAuthorForm))
+
+

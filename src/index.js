@@ -6,17 +6,17 @@ import AuthorQuiz from './AuthorQuiz';
 import registerServiceWorker from './registerServiceWorker';
 import {shuffle, sample} from 'underscore';
 import { AddAuthorForm } from './AddAuthorForm'
+import * as Redux from 'redux';
+import * as ReactRedux from 'react-redux';
 
-
-
-const authors = [
+let authors = [
     {
         name: 'Mark Twain',
         imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Mark_Twain%2C_Brady-Handy_photo_portrait%2C_Feb_7%2C_1871%2C_cropped.jpg/220px-Mark_Twain%2C_Brady-Handy_photo_portrait%2C_Feb_7%2C_1871%2C_cropped.jpg',
         imageSource: 'Goggle Images',
-        books: ['The Adventures of Huckleberry Finn', 
-        "Life of the Mississippi",
-        "Roughing It"
+        books: ['The Adventures of Huckleberry Finn',
+            "Life of the Mississippi",
+            "Roughing It"
         ]
     },
     {
@@ -24,7 +24,7 @@ const authors = [
         imageUrl: 'https://larryfire.files.wordpress.com/2012/04/jk-rowling-official-portrait.jpg',
         imageSource: 'Goggle Images',
         books: ['Harry Potter and the Sorcerers Stone']
-    }, 
+    },
     {
         name: 'Joseph Conrad',
         imageUrl: 'https://m.media-amazon.com/images/M/MV5BZDlkYTFkNjMtZDhmNC00NTQ2LWJlNTMtNmVhMjhhNjZhNDhhXkEyXkFqcGdeQXVyMTc4MzI2NQ@@._V1_UY317_CR5,0,214,317_AL_.jpg',
@@ -42,11 +42,31 @@ const authors = [
         imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Dickens_Gurney_head.jpg/200px-Dickens_Gurney_head.jpg',
         imageSource: 'Goggle Images',
         books: ['David Copperfield', 'A Tale of Two Cities']
-    }  
+    }
 ]
 
+let store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
-const getTurnData = () => {
+function reducer(state = { authors, turnData: getTurnData(authors), highlight: ''}, action) {
+    console.log(action)
+    switch (action.type) {
+        case 'ANSWER_SELECTED':
+            const isCorrect = state.turnData.author.books.some((book) => book === action.answer);
+            return Object.assign({}, state, {highlight: isCorrect ? 'correct' : 'wrong'});
+        case 'CONTINUE':
+            return Object.assign({}, state, {
+                highlight: '',
+                turnData: getTurnData(state.authors)
+            });
+        case 'ADD_AUTHOR':
+            return Object.assign({}, state, authors = state.authors.concat([action.author]));
+        default:
+            return state; 
+    }
+}
+
+
+function getTurnData(authors){
     const allBooks = authors.reduce(function (p, c, i) {
         return p.concat(c.books);
     }, []);
@@ -60,53 +80,17 @@ const getTurnData = () => {
     }
 } 
 
-let state = resetState();
-
-function onAnswerSelected(answer) {
-    console.log(answer, 'answer')
-    const isCorrect = state.turnData.author.books.some((book) => book === answer);
-    state.highlight = isCorrect? 'correct' : 'wrong'
-
-    render()
-}
-
-const AuthorWrapper = withRouter(({history}) => 
-    <AddAuthorForm onAddAuthor={(author) => { 
-        authors.push(author);
-        history.push('/');
-    }} />
+ReactDOM.render(
+<BrowserRouter>
+        <ReactRedux.Provider store={store}>
+            <React.Fragment>
+                <Route exact path='/' component={AuthorQuiz} />
+                <Route exact path='/add' component={AddAuthorForm} />
+            </React.Fragment>
+        </ReactRedux.Provider>
+</BrowserRouter>, 
+document.getElementById('root')
 );
 
-function resetState() {
-    return {
-        turnData: getTurnData(authors),
-        highLight: 'none'
-    }
-}
- 
-function App() {
-    return <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected} 
-    onContinue={() => {
-        state = resetState();
-        render();
-    }}
-    />
-}
 
-function render() {
-    ReactDOM.render(
-    <BrowserRouter>
-        <React.Fragment>
-            <Route exact path='/' component={App} />
-            <Route exact path='/add' component={AuthorWrapper} />
-        </React.Fragment>
-    </BrowserRouter>, 
-    document.getElementById('root')
-    );
-}
-
-
-
-// 
-render()
 registerServiceWorker();
